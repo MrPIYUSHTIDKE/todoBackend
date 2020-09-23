@@ -13,14 +13,14 @@ exports.todo_getall = (req,res)=>{
                 }
                 else {
                     return res.status(404).json({
-                        Errooor: "doesnt work booi"
+                        SyntaxError: "There was a problem executing the query. Check the SQL syntax or the procedure itself."
                     });
                 }
             })
         }
         else{
             return res.status(500).json({
-                DatabaseError: 'boooi u fked up'
+                DatabaseError: "Could not connect to MySQL server."
             });
         }
     });
@@ -40,7 +40,7 @@ exports.todo_getbyid = (req, res)=>{
                     }
                     else{
                         return res.status(404).json({
-                            ErrorMessage: "A `ToDo` with ID: "+todoID+" does not exist."
+                            ErrorMessage: "A todo listing with ID: `"+todoID+"` does not exist."
                         });
                     }
                 }
@@ -53,7 +53,7 @@ exports.todo_getbyid = (req, res)=>{
         }
         else{
             return res.status(500).json({
-                DatabaseError: 'my nig u fked up big time'
+                DatabaseError: "Could not connect to MySQL server."
             });
         }
     });

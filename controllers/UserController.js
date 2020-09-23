@@ -20,7 +20,7 @@ exports.user_getAll = (req,res)=>{
         }
         else{
             return res.status(500).json({
-                DatabaseError: 'my nig u fked up big time'
+                DatabaseError: "Could not connect to MySQL server."
             });
         }
     });
@@ -33,9 +33,16 @@ exports.user_getbyemail = (req,res)=>{
         if(!err){
             connection.query(sql, [emailReq],(err, rows)=>{
                 if(!err){
-                    return res.status(200).json({
-                        User: rows[0]
-                    });
+                    if(rows[0].length>0){
+                        return res.status(200).json({
+                            User_Data: rows[0]
+                        });
+                    }
+                    else{
+                        return res.status(404).json({
+                            ErrorMessage: "A User with e-mail: `"+emailReq+"` does not exist."
+                        });
+                    }
                 }
                 else{
                     return res.status(404).json({
@@ -63,8 +70,8 @@ exports.user_post = (req,res)=>{
             connection.query(sql,[emailReq,nameReq,surnameReq,passwordReq], (err,rows)=>{
                 if(!err){
                     return res.status(201).json({
-                        CreatedUser: 'User with e-mail '+emailReq+' created successfully!',
-                        DbResponse: rows[0]
+                        CreatedUser: 'User with e-mail `'+emailReq+'` created successfully!',
+                        DatabaseResponse: rows[0]
                     });
                 }
                 else{
