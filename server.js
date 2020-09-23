@@ -10,7 +10,6 @@ const cookieParser = require('cookieparser');
 const dbMetadata = process.env;
 const portNumber = 8000;
 
-
 const app = express();
 
 // route paths
@@ -34,7 +33,7 @@ app.use((req,res,next)=>{
 
 // setting up the port connection
 
-app.set('port', (dbMetadata.port || 3306));
+app.set('port', (dbMetadata.port || portNumber));
 
 // setting up the base routes for the server to navigate
 
