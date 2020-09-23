@@ -39,7 +39,7 @@ exports.user_getbyemail = (req,res)=>{
                         });
                     }
                     else{
-                        return res.status(404).json({
+                        return res.status(400).json({
                             ErrorMessage: "A User with e-mail: `"+emailReq+"` does not exist."
                         });
                     }

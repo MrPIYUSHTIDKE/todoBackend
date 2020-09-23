@@ -39,7 +39,7 @@ exports.todo_getbyid = (req, res)=>{
                         });
                     }
                     else{
-                        return res.status(404).json({
+                        return res.status(400).json({
                             ErrorMessage: "A todo listing with ID: `"+todoID+"` does not exist."
                         });
                     }
