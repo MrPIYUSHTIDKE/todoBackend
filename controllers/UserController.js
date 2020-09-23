@@ -1,6 +1,8 @@
 const db = require('../db/dbSingleton.js');
 var poolDb = db.getPool();
 
+// gets all users from the database
+
 exports.user_getAll = (req,res)=>{
     const sql = 'CALL getAllUsers();';
     poolDb.getConnection(function (err, connection) {
@@ -25,6 +27,8 @@ exports.user_getAll = (req,res)=>{
         }
     });
 }
+
+// gets data about one user, search by e-mail
 
 exports.user_getbyemail = (req,res)=>{
     const sql = 'CALL getUser(?)';
@@ -58,6 +62,8 @@ exports.user_getbyemail = (req,res)=>{
         }
     });
 }
+
+// creates a new user
 
 exports.user_post = (req,res)=>{
     poolDb.getConnection(function (err, connection){

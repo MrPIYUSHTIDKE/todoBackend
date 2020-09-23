@@ -1,15 +1,14 @@
 // library imports
 
 const express = require('express');
-const session = require('express-session');
 const ip = require('ip');
-const cookieParser = require('cookieparser');
+const path = require('path');
+const favicon = require('serve-favicon');
 
 // variables
 
 const dbMetadata = process.env;
 const portNumber = 8000;
-
 const app = express();
 
 // route paths
@@ -31,9 +30,13 @@ app.use((req,res,next)=>{
     next();
   });
 
-// setting up the port connection
+// setting up the port for the connection
 
 app.set('port', (dbMetadata.port || portNumber));
+
+// setting up an icon
+
+app.use(favicon(path.join(__dirname,'resources','images','todoicon.ico')));
 
 // setting up the base routes for the server to navigate
 

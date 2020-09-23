@@ -18,6 +18,8 @@
 */
 
 
+// code
+
 const mysql = require('mysql');
 var poolDb;
 var dbMetadata = process.env;
@@ -36,7 +38,7 @@ module.exports = {
             });
         }
         catch {
-            throw new Error("Port 3306 is already in use. A connection to the database already exists.")
+            throw new Error("Port 3306 is already in use. Could not connect to database.")
         };
         return poolDb;
     }
