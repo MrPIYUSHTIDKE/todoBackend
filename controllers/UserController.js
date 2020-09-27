@@ -95,42 +95,34 @@ exports.user_post = (req,res)=>{
     });
 }
 
-// edit an existing user e-mail
+// update username via username. Use current (old) username and add a `username` paramater in the body, storing the value of the new username
 
-exports.user_patch = (req, res, next)=>{
-    poolDb.getConnection(function(err, connection){
-        if(!err){
-            var sql = "";
-        }
-    })
-}
-
-// update username via e-mail
-
-exports.user_usernamepatch = (req,res,next)=>{
+exports.user_usernamepatch = (req,res)=>{
     poolDb.getConnection(function(err, connection){
         if(!err){
             var sql = 'CALL updateUsername(?,?)';
-            var emailReq = req.params.email;
+            var oldUsername = req.params.oldUsername;
             var usernameReq = req.body.username;
-            if(!err){
-                connection.query(sql,[emailReq,usernameReq], (err, rows)=>{
-                    if(!err){
+            connection.query(sql,[oldUsername,usernameReq], (err, rows)=>{
+                if(!err){
+                    if(rows[0].length>0){
                         res.status(201).json({
-                            UpdatedUser: 'User with e-mail `'+emailReq+'` has changed its username to `'+usernameReq+'` successfully.',
+                            UpdatedUser: 'Successfully changed username to `'+usernameReq+'`.',
                             DatabaseResponse: rows[0]
                         });
                     }
-                    else {
-                        print('errooor');
+                    else{
+                        return res.status(400).json({
+                            ErrorMessage: "User with username `"+usernameReq+"` does not exist."
+                        });
                     }
-                });
-            }
-            else {
-                return res.status(404).json({
-                    SyntaxError: "There was a problem executing the query. Check the SQL syntax or the procedure itself."
-                });
-            }
+                }
+                else {
+                    return res.status(404).json({
+                        SyntaxError: "There was a problem executing the query. Check the SQL syntax or the procedure itself."
+                    });
+                }
+            });
         }
         else {
             return res.status(500).json({

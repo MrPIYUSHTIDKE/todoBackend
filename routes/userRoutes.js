@@ -4,9 +4,9 @@ const UserController = require('../controllers/UserController');
 
 router.get('/', UserController.user_getAll);
 
-withrouter.get('/:username', UserController.user_getbyusername);
+router.get('/:username', UserController.user_getbyusername);
 
-router.patch('/changeusername/:email', UserController.user_usernamepatch);
+router.patch('/changeusername/:oldUsername', UserController.user_usernamepatch);
 
 router.post('/', UserController.user_post);
 
