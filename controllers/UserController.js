@@ -1,4 +1,5 @@
 const db = require('../db/dbSingleton.js');
+const bcrypt = require('bcrypt');
 var poolDb = db.getPool();
 
 // gets all users from the database
@@ -68,15 +69,18 @@ exports.user_getbyusername = (req,res)=>{
 exports.user_post = (req,res)=>{
     poolDb.getConnection(function (err, connection){
         const emailReq = req.body.email;
+        const usernameReq = req.body.username;
         const nameReq = req.body.name;
         const surnameReq = req.body.surname;
         const passwordReq = req.body.password;
+        const salt = 15;
+        const hashedPassword = bcrypt.hashSync(passwordReq, salt);
         if(!err){
-            const sql = 'INSERT INTO `user` VALUES(?,?,?,?)'; 
-            connection.query(sql,[emailReq,nameReq,surnameReq,passwordReq], (err,rows)=>{
+            const sql = 'CALL createUser(?,?,?,?,?)'; 
+            connection.query(sql,[emailReq,usernameReq,surnameReq,nameReq,hashedPassword], (err,rows)=>{
                 if(!err){
                     return res.status(201).json({
-                        CreatedUser: 'User with e-mail `'+emailReq+'` created successfully!',
+                        CreatedUser: 'User with e-mail `'+emailReq+'` created successfully! Welcome onboard, '+nameReq+".",
                         DatabaseResponse: rows[0]
                     });
                 }
@@ -132,4 +136,81 @@ exports.user_usernamepatch = (req,res)=>{
     });
 }
 
-// delete an existing user via e-mail
+// delete an existing user via username
+
+exports.user_delete = (req,res)=>{
+    poolDb.getConnection(function (err, connection){
+        if(!err){
+            var sql = 'CALL deleteUser(?)';
+            var usernameReq = req.params.username;
+            connection.query(sql,[usernameReq], (err, rows)=>{
+                if(!err){
+                    res.status(201).json({
+                        DeletedUser: 'Successfully deleted user '+usernameReq+'.',
+                        DatabaseResponse: rows[0]
+                    });
+                }
+                else{
+                    return res.status(404).json({
+                        SyntaxError: "There was a problem executing the query. Check the SQL syntax or the procedure itself."
+                    });
+                }
+            });
+        }
+        else{
+            return res.status(500).json({
+                DatabaseError: "Could not connect to MySQL server."
+            });
+        }
+    })
+}
+
+// user login
+
+exports.user_login = (req, res) => {
+    poolDb.getConnection(function (err, connection){
+        if(!err){
+            const salt = 15;
+            const sql = 'CALL userLogin(?)';
+            const usernameReq = req.params.username;
+            const passwordReq = req.body.password;
+
+            bcrypt.hash(passwordReq, salt, function (err, hash){
+                if(!err){
+                    connection.query(sql,[usernameReq], (err, rows)=>{
+                        var receivedData = res.json(rows);
+                        if(!err){
+                            if(hash == receivedData.password){    
+                                console.log('I WORK NOW');
+                                return res.status(201).json({
+                                    LoggedInUser: 'You have been logged in, '+usernameReq+'.',
+                                    DatabaseResult: rows[0]
+                                });
+                            }
+                            else{
+                                return res.status(401).json({
+                                    LoginError: 'Passwords didnt match. Try again.'
+                                });
+                            }
+                        }
+                        else{
+                            return res.status(404).json({
+                                SyntaxError: "There was a problem executing the query. Check the SQL syntax or the procedure itself."
+                            });
+                        }
+                    });
+                }
+                else{
+                    return res.status(500).json({
+                        EncryptionError: "There was a problem with encrypting the password."
+                    });
+                }
+        });
+    }
+    else {
+        return res.status(500).json({
+            DatabaseError: "Could not connect to MySQL server."
+        });
+        }
+    });
+}

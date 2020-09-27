@@ -10,4 +10,8 @@ router.patch('/changeusername/:oldUsername', UserController.user_usernamepatch);
 
 router.post('/', UserController.user_post);
 
+router.delete('/:username',UserController.user_delete);
+
+router.post('/login/:username', UserController.user_login);
+
 module.exports = router;
