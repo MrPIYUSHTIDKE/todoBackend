@@ -5,6 +5,7 @@
         "user":"root",
         "dbName": "todolist",
         "password": "",
-        "allowedConnections": 10
+        "allowedConnections": 10,
+        "samodatestvam":"test"
     }
 }
