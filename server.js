@@ -3,20 +3,23 @@
 const express = require('express');
 const ip = require('ip');
 const path = require('path');
+const bodyParser = require('body-parser');
 const favicon = require('serve-favicon');
 
-// variables
+// constants
 
+const TodoRoutes = require('./routes/todoRoutes');
+const UserRoutes = require('./routes/userRoutes');
 const dbMetadata = process.env;
 const portNumber = 8000;
 const app = express();
 
-// route paths
+// setting up middleware (headers, accepted data, bodyparser, handling `options` http method, cookies)
 
-const TodoRoutes = require('./routes/todoRoutes');
-const UserRoutes = require('./routes/userRoutes');
-
-// setting up headers, accepted data, methods, cookies
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({
+    extended: true
+}));
 
 app.use((req,res,next)=>{
     res.header('Access-Control-Allow-Origin','*');
@@ -30,6 +33,11 @@ app.use((req,res,next)=>{
     next();
   });
 
+// setting up the base routes for the server to navigate
+
+app.use('/user', UserRoutes);
+app.use('/todo', TodoRoutes);
+
 // setting up the port for the connection
 
 app.set('port', (dbMetadata.port || portNumber));
@@ -37,11 +45,6 @@ app.set('port', (dbMetadata.port || portNumber));
 // setting up an icon
 
 app.use(favicon(path.join(__dirname,'resources','images','todoicon.ico')));
-
-// setting up the base routes for the server to navigate
-
-app.use('/user', UserRoutes);
-app.use('/todo', TodoRoutes);
 
 // start the server
 

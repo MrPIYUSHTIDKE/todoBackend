@@ -30,12 +30,12 @@ exports.user_getAll = (req,res)=>{
 
 // gets data about one user, search by e-mail
 
-exports.user_getbyemail = (req,res)=>{
+exports.user_getbyusername = (req,res)=>{
     const sql = 'CALL getUser(?)';
     poolDb.getConnection(function (err, connection) {
-        var emailReq = req.params.email;
+        var usernameReq = req.params.username;
         if(!err){
-            connection.query(sql, [emailReq],(err, rows)=>{
+            connection.query(sql, [usernameReq],(err, rows)=>{
                 if(!err){
                     if(rows[0].length>0){
                         return res.status(200).json({
@@ -44,7 +44,7 @@ exports.user_getbyemail = (req,res)=>{
                     }
                     else{
                         return res.status(400).json({
-                            ErrorMessage: "A User with e-mail: `"+emailReq+"` does not exist."
+                            ErrorMessage: "User with username `"+usernameReq+"` does not exist."
                         });
                     }
                 }
@@ -94,3 +94,50 @@ exports.user_post = (req,res)=>{
         }
     });
 }
+
+// edit an existing user e-mail
+
+exports.user_patch = (req, res, next)=>{
+    poolDb.getConnection(function(err, connection){
+        if(!err){
+            var sql = "";
+        }
+    })
+}
+
+// update username via e-mail
+
+exports.user_usernamepatch = (req,res,next)=>{
+    poolDb.getConnection(function(err, connection){
+        if(!err){
+            var sql = 'CALL updateUsername(?,?)';
+            var emailReq = req.params.email;
+            var usernameReq = req.body.username;
+            if(!err){
+                connection.query(sql,[emailReq,usernameReq], (err, rows)=>{
+                    if(!err){
+                        res.status(201).json({
+                            UpdatedUser: 'User with e-mail `'+emailReq+'` has changed its username to `'+usernameReq+'` successfully.',
+                            DatabaseResponse: rows[0]
+                        });
+                    }
+                    else {
+                        print('errooor');
+                    }
+                });
+            }
+            else {
+                return res.status(404).json({
+                    SyntaxError: "There was a problem executing the query. Check the SQL syntax or the procedure itself."
+                });
+            }
+        }
+        else {
+            return res.status(500).json({
+                DatabaseError: "Could not connect to MySQL server."
+            });
+        }
+    });
+}
+
+// delete an existing user via e-mail
