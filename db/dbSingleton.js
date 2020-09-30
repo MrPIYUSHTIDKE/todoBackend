@@ -22,19 +22,19 @@
 
 const mysql = require('mysql');
 var poolDb;
-var dbMetadata = process.env;
+var Metadata = process.env;
 
 module.exports = {
     getPool: function() {
         try {
             if(poolDb) return poolDb;
             poolDb = mysql.createPool({
-                host: dbMetadata.host,
-                port: dbMetadata.port,
-                user: dbMetadata.user,
-                password: dbMetadata.password,
-                database: dbMetadata.dbName,
-                connectionLimit: dbMetadata.allowedConnections
+                host: Metadata.host,
+                port: Metadata.DBport,
+                user: Metadata.user,
+                password: Metadata.password,
+                database: Metadata.dbName,
+                connectionLimit: Metadata.allowedConnections
             });
         }
         catch {

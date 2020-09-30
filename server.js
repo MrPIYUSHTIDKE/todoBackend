@@ -10,9 +10,9 @@ const favicon = require('serve-favicon');
 
 const TodoRoutes = require('./routes/todoRoutes');
 const UserRoutes = require('./routes/userRoutes');
-const dbMetadata = process.env;
-const portNumber = 8000;
+const Metadata = process.env;
 const app = express();
+const PortNumber = 8000; 
 
 // setting up middleware (headers, accepted data, bodyparser, handling `options` http method, cookies)
 
@@ -40,7 +40,7 @@ app.use('/todo', TodoRoutes);
 
 // setting up the port for the connection
 
-app.set('port', (dbMetadata.port || portNumber));
+app.set('port', (PortNumber));
 
 // setting up an icon
 
@@ -48,6 +48,6 @@ app.use(favicon(path.join(__dirname,'resources','images','todoicon.ico')));
 
 // start the server
 
-app.listen(portNumber, ()=>{
-    console.log('Server running! You can connect by opening http://'+ip.address()+":"+portNumber+". Or http://localhost:"+portNumber);
+app.listen(PortNumber, ()=>{
+    console.log('Server running! You can connect by opening http://'+ip.address()+":"+PortNumber+". Or http://localhost:"+PortNumber);
 });

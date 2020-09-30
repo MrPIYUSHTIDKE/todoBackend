@@ -1,10 +1,11 @@
 {
     "env":{
         "host": "localhost",
-        "port": 3306,
+        "DBport": 3306,
         "user":"root",
         "dbName": "todolist",
         "password": "",
-        "allowedConnections": 10
+        "allowedConnections": 10,
+        "NodePort": 8000
     }
 }
