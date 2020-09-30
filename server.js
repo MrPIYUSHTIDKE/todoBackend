@@ -10,7 +10,6 @@ const favicon = require('serve-favicon');
 
 const TodoRoutes = require('./routes/todoRoutes');
 const UserRoutes = require('./routes/userRoutes');
-const Metadata = process.env;
 const app = express();
 const PortNumber = 8000; 
 

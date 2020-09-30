@@ -11,20 +11,20 @@ exports.user_getAll = (req,res)=>{
             connection.query(sql, (err, rows)=>{
                 if(!err && rows[0].length>0){
                     return res.status(200).json({
-                        Users: rows[0]
+                        AlUsers: rows[0]
                     });
                 }
                 else {
                     return res.status(404).json({
-                        SyntaxError: "There was a problem executing the query. Check the SQL syntax or the procedure itself."
+                        QuerySyntaxError: "There was a problem executing the query. Check the SQL syntax or the procedure itself."
                     });
                 }
             })
         }
         else{
             return res.status(500).json({
-                DatabaseError: "Could not connect to MySQL server."
-            });
+                DatabaseConnectionError: "Could not connect to MySQL server. Check if port 3306 is on or busy."
+            }); 
         }
     });
 }
@@ -40,26 +40,26 @@ exports.user_getbyusername = (req,res)=>{
                 if(!err){
                     if(rows[0].length>0){
                         return res.status(200).json({
-                            User_Data: rows[0]
+                            UserData: rows[0]
                         });
                     }
                     else{
                         return res.status(400).json({
-                            ErrorMessage: "User with username `"+usernameReq+"` does not exist."
+                            NonExistantUser: "User with username `"+usernameReq+"` does not exist."
                         });
                     }
                 }
                 else{
                     return res.status(404).json({
-                        SyntaxError: "There was a problem executing the query. Check the SQL syntax or the procedure itself."
+                        QuerySyntaxError: "There was a problem executing the query. Check the SQL syntax or the procedure itself."
                     });
                 }
             });
         }
         else{
             return res.status(500).json({
-                DatabaseError: "Could not connect to MySQL server."
-            });
+                DatabaseConnectionError: "Could not connect to MySQL server. Check if port 3306 is on or busy."
+            }); 
         }
     });
 }
@@ -86,15 +86,15 @@ exports.user_register = (req,res)=>{
                 }
                 else{
                     return res.status(404).json({
-                        SyntaxError: "There was a problem executing the query. Check the SQL syntax or the procedure itself."
+                        QuerySyntaxError: "There was a problem executing the query. Check the SQL syntax or the procedure itself."
                     });
                 }
             });
         }
         else{
             return res.status(500).json({
-                DatabaseError: "Could not connect to MySQL server."
-            });
+                DatabaseConnectionError: "Could not connect to MySQL server. Check if port 3306 is on or busy."
+            }); 
         }
     });
 }
@@ -118,21 +118,21 @@ exports.user_changeusername = (req,res)=>{
                     }
                     else{
                         return res.status(404).json({
-                            ErrorMessage: "User with username `"+oldUsername+"` does not exist."
+                            NonExistantUser: "User with username `"+oldUsername+"` does not exist."
                         });
                     }
                 }
                 else {
                     return res.status(404).json({
-                        SyntaxError: "There was a problem executing the query. Check the SQL syntax or the procedure itself."
+                        QuerySyntaxError: "There was a problem executing the query. Check the SQL syntax or the procedure itself."
                     });
                 }
             });
         }
         else {
             return res.status(500).json({
-                DatabaseError: "Could not connect to MySQL server."
-            });
+                DatabaseConnectionError: "Could not connect to MySQL server. Check if port 3306 is on or busy."
+            }); 
         }
     });
 }
@@ -149,27 +149,27 @@ exports.user_delete = (req,res)=>{
                     var numberofrows = rows.affectedRows;
                     if(numberofrows>0){
                         res.status(201).json({
-                            DeletedUser: 'Successfully deleted user `'+usernameReq+'`.'
+                            DeletedUser: 'Successfully deleted user. Goodbye and good riddance, `'+usernameReq+'`.'
                         });
                     }
                     else {
                         res.status(404).json({
-                            ErrorMessage: "User with username `"+usernameReq+"` does not exist."
+                            NonExistantUser: "User with username `"+usernameReq+"` does not exist."
                         });
                     }
                    
                 }
                 else{
                     return res.status(404).json({
-                        SyntaxError: "There was a problem executing the query. Check the SQL syntax or the procedure itself."
+                        QuerySyntaxError: "There was a problem executing the query. Check the SQL syntax or the procedure itself."
                     });
                 }
             });
         }
         else{
             return res.status(500).json({
-                DatabaseError: "Could not connect to MySQL server."
-            });
+                DatabaseConnectionError: "Could not connect to MySQL server. Check if port 3306 is on or busy."
+            }); 
         }
     })
 }
@@ -177,49 +177,9 @@ exports.user_delete = (req,res)=>{
 // user login
 
 exports.user_login = (req, res) => {
-    poolDb.getConnection(function (err, connection){
-        if(!err){
-            const sql = 'CALL userLogin(?)';
-            const usernameReq = req.body.username;
-            const passwordReq = req.body.password;
 
-            bcrypt.compare(passwordReq, function (err, hash){
-                if(!err){
-                    connection.query(sql,[usernameReq], (err, rows)=>{
-                        if(!err){
-                            if(hash == rows[0][0].password){    
-                                console.log('I WORK NOW');
-                                return res.status(201).json({
-                                    LoggedInUser: 'You have been logged in, '+usernameReq+'.',
-                                    DatabaseResult: rows[0]
-                                });
-                            }
-                            else{
-                                return res.status(401).json({
-                                    LoginError: 'Wrong password. Try again.'
-                                });
-                            }
-                        }
-                        else{
-                            return res.status(404).json({
-                                SyntaxError: "There was a problem executing the query. Check the SQL syntax or the procedure itself."
-                            });
-                        }
-                    });
-                }
-                else{
-                    return res.status(500).json({
-                        EncryptionError: "There was a problem with encrypting the password."
-                    });
-                }
-        });
-    }
-    else {
-        return res.status(500).json({
-            DatabaseError: "Could not connect to MySQL server."
-        });
-        }
-    });
+        // REWRITE THE WHOLE METHOD. bcrypt.compare / bcrypt.hashSync
+
 }
 
 // changes password of a user, by username in params
@@ -239,15 +199,15 @@ exports.user_changepassword = (req,res) => {
                 }
                 else {
                     return res.status(400).json({
-                        ErrorMessage: "User with username `"+usernameReq+"` does not exist."
+                        NonExistantUser: "User with username `"+usernameReq+"` does not exist."
                     });
                 }
             });
         }
         else{
             return res.status(500).json({
-                DatabaseError: "Could not connect to MySQL server."
-            });
+                DatabaseConnectionError: "Could not connect to MySQL server. Check if port 3306 is on or busy."
+            }); 
         }
     })
 }
