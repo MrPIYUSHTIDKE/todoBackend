@@ -6,12 +6,14 @@ router.get('/', UserController.user_getAll);
 
 router.get('/:username', UserController.user_getbyusername);
 
-router.patch('/changeusername/:oldUsername', UserController.user_usernamepatch);
+router.patch('/changeusername/', UserController.user_changeusername);
 
-router.post('/', UserController.user_post);
+router.patch('/changepassword/:username', UserController.user_changepassword)
+
+router.post('/register/', UserController.user_register);
 
 router.delete('/:username',UserController.user_delete);
 
-router.post('/login/:username', UserController.user_login);
+router.post('/login/', UserController.user_login);
 
 module.exports = router;
