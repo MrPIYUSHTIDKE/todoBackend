@@ -146,11 +146,10 @@ exports.user_delete = (req,res)=>{
             var usernameReq = req.params.username;
             connection.query(sql,[usernameReq], (err, rows)=>{
                 if(!err){
-                    rowsNumber = rows.affectedRows;
-                    if(rowsNumber>0){
+                    var numberofrows = rows.affectedRows;
+                    if(numberofrows>0){
                         res.status(201).json({
-                            DeletedUser: 'Successfully deleted user `'+usernameReq+'`.',
-                            DatabaseResponse: rows[0]
+                            DeletedUser: 'Successfully deleted user `'+usernameReq+'`.'
                         });
                     }
                     else {
