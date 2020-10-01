@@ -1,5 +1,5 @@
 This is the backend of my first semester project for the web development class. A pretty simple server system which handles data in the `To do list` database. 
-It handles all CRUD operations (GET, POST, DELETE and PATCH http requests) and it has straight forward url routes:
+It handles all CRUD operations (POST, GET, PATCH and DELETE http requests) and it has straight forward url routes:
 
     • https://localhost:8000/user/register [POST] - creates a new user, handles data in req.body (registration)
 
