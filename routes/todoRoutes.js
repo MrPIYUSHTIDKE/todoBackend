@@ -18,7 +18,7 @@ router.get('/favourite/:email', TodoController.getallfavouritesperuser);
 
 router.get('/finished/:email', TodoController.getallfinishedperuser);
 
-router.get('/notfinished/:email', TodoController.getallunfinishedperuser);
+router.get('/unfinished/:email', TodoController.getallunfinishedperuser);
 
 // Update methods
 
