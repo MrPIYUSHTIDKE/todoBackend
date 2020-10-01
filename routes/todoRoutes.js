@@ -2,20 +2,30 @@ const express = require('express');
 const router = express.Router();
 const TodoController = require('../controllers/TodoController.js');
 
-router.get('/', TodoController.todo_getall);
+// Create method
 
-router.get('/:todoid', TodoController.todo_getbyid);
+router.post('/',TodoController.create);
 
-router.get('/peruser/:email', TodoController.todo_getalltodosperuser);
+// Read methods
 
-router.get('/favourite/:email', TodoController.todo_getallfavouritesperuser);
+router.get('/', TodoController.getall);
 
-router.get('/finished/:email', TodoController.todo_getallfinishedperuser);
+router.get('/:todoid', TodoController.getbyid);
 
-router.get('/notfinished/:email', TodoController.todo_getallnotfinishedperuser);
+router.get('/peruser/:email', TodoController.getalltodosperuser);
 
-router.post('/',TodoController.todo_create);
+router.get('/favourite/:email', TodoController.getallfavouritesperuser);
 
-router.delete('/:todoid', TodoController.todo_delete);
+router.get('/finished/:email', TodoController.getallfinishedperuser);
+
+router.get('/notfinished/:email', TodoController.getallunfinishedperuser);
+
+// Update methods
+
+router.patch('/:todoid', TodoController.update);
+
+// Delete methods
+
+router.delete('/:todoid', TodoController.delete);
 
 module.exports = router;

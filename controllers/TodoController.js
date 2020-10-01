@@ -4,7 +4,7 @@ var poolDb = db.getPool();
 
 // gets all todo records
 
-exports.todo_getall = (req,res)=>{
+exports.getall = (req,res)=>{
     poolDb.getConnection(function (err, connection) {
         if(!err){
             const sql = 'CALL getAllTodos();';
@@ -29,14 +29,14 @@ exports.todo_getall = (req,res)=>{
     });
 }
 
-// searches for a single todo record using an id
+// gets a single todo record using an id
 
-exports.todo_getbyid = (req, res)=>{
+exports.getbyid = (req, res)=>{
     poolDb.getConnection(function (err, connection){
         const sql = 'CALL getTodo(?)';
-        var todoID = req.params.todoid;
+        var todoid = req.params.todoid;
         if(!err){
-            connection.query(sql,[todoID], (err,rows) => {
+            connection.query(sql,[todoid], (err,rows) => {
                 if(!err){
                     if(rows[0].length>0){
                         return res.status(200).json({
@@ -45,7 +45,7 @@ exports.todo_getbyid = (req, res)=>{
                     }
                     else{
                         return res.status(400).json({
-                            NonExistantTodo: "A todo listing with ID: `"+todoID+"` does not exist."
+                            NonExistantTodo: "A todo listing with ID: `"+todoid+"` does not exist."
                         });
                     }
                 }
@@ -66,7 +66,7 @@ exports.todo_getbyid = (req, res)=>{
 
 // creates a new todo record
 
-exports.todo_create = (req,res) => {
+exports.create = (req,res) => {
     poolDb.getConnection(function (err, connection){
         if(!err){
             const sql = 'CALL createTodo(?,?,?,?,?)';
@@ -99,7 +99,7 @@ exports.todo_create = (req,res) => {
 
 // deletes a todo record using an id
 
-exports.todo_delete = (req,res) => {
+exports.delete = (req,res) => {
     poolDb.getConnection(function (err, connection){
         if(!err){
             var sql = 'CALL deleteTodo(?)';
@@ -133,15 +133,50 @@ exports.todo_delete = (req,res) => {
     });
 }
 
-// updates a todo record
+// updates a todo record using an id
 
-exports.todo_update = (req, res) => {
-
+exports.update = (req, res) => {
+    poolDb.getConnection(function (err, connection){
+        if(!err){
+            var sql = 'CALL updateTodo(?,?,?,?,?)';
+            var todoidReq = req.params.todoid;
+            var descriptionReq = req.body.description;
+            var dateReq = req.body.date;
+            var isFavouriteReq = req.body.isFavourite;
+            var isFinishedReq = req.body.isFinished;
+            connection.query(sql,[todoidReq,descriptionReq,dateReq,isFavouriteReq,isFinishedReq], (err,rows) => {
+                if(!err){
+                    var numberofrows = rows.affectedRows;
+                    console.log("~~~~~",numberofrows);
+                    if(numberofrows>0){
+                        res.status(201).json({
+                            UpdatedTodo: 'Successfully updated Todo record with id `'+todoidReq+'`.'
+                        });
+                    }
+                    else{
+                        res.status(404).json({
+                            NonExistantTodo: "Todo with id `"+todoidReq+"` does not exist."
+                        });
+                    }
+                }
+                else{
+                    return res.status(404).json({
+                        QuerySyntaxError: "There was a problem executing the query. Check the SQL syntax or the procedure itself."
+                    });
+                }
+            });
+        }
+        else{
+            return res.status(500).json({
+                DatabaseConnectionError: "Could not connect to MySQL server. Check if port 3306 is on or busy."
+            }); 
+        }
+    })
 }
 
-// gets all todo records for a specific user
+// gets all todo records for a specific user using an e-mail
 
-exports.todo_getalltodosperuser = (req,res) => {
+exports.getalltodosperuser = (req,res) => {
     poolDb.getConnection(function (err, connection){
         if(!err){
             var sql = 'CALL getAllTodosPerUser(?)';
@@ -175,9 +210,9 @@ exports.todo_getalltodosperuser = (req,res) => {
     }); 
 }
 
-// gets all favourited todo records for a specific user
+// gets all favourited todo records for a specific user using an e-mail
 
-exports.todo_getallfavouritesperuser = (req,res) => {
+exports.getallfavouritesperuser = (req,res) => {
     poolDb.getConnection(function (err, connection){
         if(!err){
             var sql = 'CALL getFavouriteTodosPerUser(?)';
@@ -211,9 +246,9 @@ exports.todo_getallfavouritesperuser = (req,res) => {
     })
 }
 
-// gets all finished todo records for a specific user 
+// gets all finished todo records for a specific user using an e-mail
 
-exports.todo_getallfinishedperuser = (req,res) => {
+exports.getallfinishedperuser = (req,res) => {
     poolDb.getConnection(function (err, connection){
         if(!err){
             var sql = 'CALL getFinishedTodosPerUser(?)';
@@ -247,7 +282,9 @@ exports.todo_getallfinishedperuser = (req,res) => {
     });
 }
 
-exports.todo_getallnotfinishedperuser = (req,res) => {
+// gets all unfinished todo records for a specific user using an e-mail
+
+exports.getallunfinishedperuser = (req,res) => {
     poolDb.getConnection(function (err, connection){
         if(!err){
             var emailReq = req.params.email;

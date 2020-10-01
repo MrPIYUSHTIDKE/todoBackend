@@ -4,7 +4,7 @@ var poolDb = db.getPool();
 
 // gets all users from the database
 
-exports.user_getAll = (req,res)=>{
+exports.getall = (req,res)=>{
     const sql = 'CALL getAllUsers();';
     poolDb.getConnection(function (err, connection) {
         if(!err){
@@ -31,7 +31,7 @@ exports.user_getAll = (req,res)=>{
 
 // gets data about one user, search by username
 
-exports.user_getbyusername = (req,res)=>{
+exports.getbyusername = (req,res)=>{
     const sql = 'CALL getUser(?)';
     poolDb.getConnection(function (err, connection) {
         var usernameReq = req.params.username;
@@ -66,7 +66,7 @@ exports.user_getbyusername = (req,res)=>{
 
 // creates a new user and encrypts the password
 
-exports.user_register = (req,res)=>{
+exports.register = (req,res)=>{
     poolDb.getConnection(function (err, connection){
         const emailReq = req.body.email;
         const usernameReq = req.body.username;
@@ -101,7 +101,7 @@ exports.user_register = (req,res)=>{
 
 // update username via username. Use current (old) username and add a `username` paramater in the body, storing the value of the new username
 
-exports.user_changeusername = (req,res)=>{
+exports.changeusername = (req,res)=>{
     poolDb.getConnection(function(err, connection){
         if(!err){
             var sql = 'CALL updateUsername(?,?)';
@@ -139,7 +139,7 @@ exports.user_changeusername = (req,res)=>{
 
 // delete an existing user via username
 
-exports.user_delete = (req,res)=>{
+exports.delete = (req,res)=>{
     poolDb.getConnection(function (err, connection){
         if(!err){
             var sql = 'CALL deleteUser(?)';
@@ -176,38 +176,16 @@ exports.user_delete = (req,res)=>{
 
 // user login
 
-exports.user_login = (req, res) => {
+exports.login = (req, res) => {
 
-        // REWRITE THE WHOLE METHOD. bcrypt.compare / bcrypt.hashSync
+        // REWRITE THE WHOLE METHOD. bcrypt.compare / bcrypt.hash
 
 }
 
 // changes password of a user, by username in params
 
-exports.user_changepassword = (req,res) => {
-    poolDb.getConnection(function (err, connection){
-        if(!err){
-            var usernameReq = req.params.username;
-            var newPassword = req.body.newpassword;
-            var sql = 'CALL updatePassword(?,?)';
-            connection.query(sql,[usernameReq, newPassword], (err, rows)=>{
-                if(!err){
-                    res.status(201).json({
-                        UpdatedPasswordMessage: 'Successfully changed password for user `'+usernameReq+'`.',
-                        DatabaseResponse: rows[0]
-                    });
-                }
-                else {
-                    return res.status(400).json({
-                        NonExistantUser: "User with username `"+usernameReq+"` does not exist."
-                    });
-                }
-            });
-        }
-        else{
-            return res.status(500).json({
-                DatabaseConnectionError: "Could not connect to MySQL server. Check if port 3306 is on or busy."
-            }); 
-        }
-    })
+exports.changepassword = (req,res) => {
+    
+    // REWRITE THE WHOLE METHOD. bcrypt.compare / bcrypt.hashSync
+
 }
